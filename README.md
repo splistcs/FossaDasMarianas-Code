@@ -16,4 +16,4 @@ Integrantes do Grupo:
 
 # Repositório Principal:
 
-(Projeto Fossa Das Marianas)[https://github.com/splistcs/EGS]
+- [[Projeto Fossa Das Marianas](https://github.com/splistcs/FossaDasMarianas)]
