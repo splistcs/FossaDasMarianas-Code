@@ -1,4 +1,4 @@
-package fdmapi.Produto.model;
+package fdmapi.produto.model;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,12 +1,12 @@
-package fdmapi.Produto.service;
+package fdmapi.produto.service;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fdmapi.Produto.model.Produto;
-import fdmapi.Produto.repository.ProdutoRepository;
+import fdmapi.produto.model.Produto;
+import fdmapi.produto.repository.ProdutoRepository;
 
 @Service
 public class ProdutoService {

@@ -1,4 +1,4 @@
-package fdmapi.Produto.ctrl;
+package fdmapi.produto.ctrl;
 
 import java.util.Optional;
 
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import fdmapi.Produto.dto.ProdutoDto;
-import fdmapi.Produto.model.Produto;
-import fdmapi.Produto.service.ProdutoService;
+import fdmapi.produto.dto.ProdutoDto;
+import fdmapi.produto.model.Produto;
+import fdmapi.produto.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

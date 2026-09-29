@@ -1,10 +1,10 @@
-package fdmapi.Produto.dto;
+package fdmapi.produto.dto;
 
 import java.util.List;
 
-import fdmapi.Produto.model.Categoria;
-import fdmapi.Produto.model.Produto;
-import fdmapi.Produto.model.Sku;
+import fdmapi.produto.model.Categoria;
+import fdmapi.produto.model.Produto;
+import fdmapi.produto.model.Sku;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
