@@ -3,6 +3,7 @@ package fdmapi.produto.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import fdmapi.categoria.model.Categoria;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

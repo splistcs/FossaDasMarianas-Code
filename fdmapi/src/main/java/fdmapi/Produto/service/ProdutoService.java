@@ -2,7 +2,6 @@ package fdmapi.produto.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fdmapi.produto.model.Produto;
@@ -11,8 +10,11 @@ import fdmapi.produto.repository.ProdutoRepository;
 @Service
 public class ProdutoService {
 	
-	@Autowired
-	private ProdutoRepository produtoRepository;
+	private final ProdutoRepository produtoRepository;
+
+	public ProdutoService(ProdutoRepository produtoRepository) {
+		this.produtoRepository = produtoRepository;
+	}
 
 	public Iterable<Produto> getAll() {		
 		return produtoRepository.findAll();

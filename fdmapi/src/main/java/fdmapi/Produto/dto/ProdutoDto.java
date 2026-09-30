@@ -2,7 +2,7 @@ package fdmapi.produto.dto;
 
 import java.util.List;
 
-import fdmapi.produto.model.Categoria;
+import fdmapi.categoria.model.Categoria;
 import fdmapi.produto.model.Produto;
 import fdmapi.produto.model.Sku;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +30,9 @@ public record ProdutoDto(
 
 ) {
     public static ProdutoDto from (Produto produto){
-        return new ProdutoDto(produto.getId(), produto.getNome(), produto.getDescricao(), produto.getMaterial(), produto.getMarca(), produto.getAtivo(), produto.getImagemPrincipalUrl(), produto.getSkus(), produto.getCategoria());
+        return new ProdutoDto(produto.getId(), produto.getNome(), 
+            produto.getDescricao(), produto.getMaterial(), produto.getMarca(),
+                produto.getAtivo(), produto.getImagemPrincipalUrl(), produto.getSkus(),
+                    produto.getCategoria());
     }
 }

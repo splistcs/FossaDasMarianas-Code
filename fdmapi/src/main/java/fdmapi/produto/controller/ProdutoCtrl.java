@@ -1,8 +1,7 @@
-package fdmapi.produto.ctrl;
+package fdmapi.produto.controller;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,14 +31,23 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 public class ProdutoCtrl {
 
-	@Autowired
-	private ProdutoService produtoService;
+	private final ProdutoService produtoService;
+
+	public ProdutoCtrl(ProdutoService produtoService) {
+		this.produtoService = produtoService;
+	}
 
 	@Operation(summary="Retornar todos os produtos")
     @ApiResponses(value = {
-            @ApiResponse(responseCode="200", description="Sucesso ao retornar todos os produtos"),
-            @ApiResponse(responseCode="404", description="Falha ao encontrar produtos no banco de dados"),
-            @ApiResponse(responseCode="500", description="Falha da Api ou da conexão com o servidor")
+            @ApiResponse(responseCode="200", 
+				description=
+					"Sucesso ao retornar todos os produtos"),
+            @ApiResponse(responseCode="404", 
+				description=
+					"Falha ao encontrar produtos no banco de dados"),
+            @ApiResponse(responseCode="500", 
+				description=
+					"Falha da Api ou da conexão com o servidor")
         }
     )
 	@GetMapping
@@ -50,9 +58,15 @@ public class ProdutoCtrl {
 
 	@Operation(summary="Retornar um produto específico")
     @ApiResponses(value = {
-            @ApiResponse(responseCode="200", description="Sucesso ao retornar o produto"),
-            @ApiResponse(responseCode="404", description="Falha ao encontrar produto no banco de dados"),
-            @ApiResponse(responseCode="500", description="Falha da Api ou da conexão com o servidor")
+            @ApiResponse(responseCode="200", 
+				description=
+					"Sucesso ao retornar o produto"),
+            @ApiResponse(responseCode="404", 
+				description=
+					"Falha ao encontrar produto no banco de dados"),
+            @ApiResponse(responseCode="500", 
+				description=
+					"Falha da Api ou da conexão com o servidor")
         }
     )
 	@GetMapping("/{id}")
@@ -72,8 +86,12 @@ public class ProdutoCtrl {
 
 	@Operation(summary="Inserir um novo produto no banco de dados")
     @ApiResponses(value = {
-            @ApiResponse(responseCode="201", description="Sucesso ao inserir o novo produtoo"),
-            @ApiResponse(responseCode="400", description="Falha ao inserir produto no banco de dados, verifique a requisição")
+            @ApiResponse(responseCode="201", 
+				description=
+					"Sucesso ao inserir o novo produto"),
+            @ApiResponse(responseCode="400", 
+				description=
+					"Falha ao inserir produto no banco de dados, verifique a requisição")
         }
     )
 	@PostMapping
@@ -101,12 +119,19 @@ public class ProdutoCtrl {
 
 	@Operation(summary="Atualizar um produto no banco de dados")
     @ApiResponses(value = {
-            @ApiResponse(responseCode="200", description="Sucesso ao atualizar o produto"),
-            @ApiResponse(responseCode="400", description="Falha ao atualizar produto no banco de dados, verifique a requisição")
+            @ApiResponse(responseCode="200", 
+				description=
+					"Sucesso ao atualizar o produto"),
+            @ApiResponse(responseCode="400", 
+				description=
+					"Falha ao atualizar produto no banco de dados, verifique a requisição")
         }
     )
 	@PutMapping("/{id}")
-	public ResponseEntity<String> update(@Valid @RequestBody ProdutoDto produtoDto, @PathVariable Long id) {
+	public ResponseEntity<String> update(
+		@Valid @RequestBody ProdutoDto produtoDto, 
+			@PathVariable Long id
+	) {
 		log.info("update( " + produtoDto + ", Id " + id + " )");
 
 		Optional<Produto> produtoData = produtoService.findById(id);
@@ -125,16 +150,23 @@ public class ProdutoCtrl {
 
 			produtoService.save(produto);
 
-			return new ResponseEntity<>("Produto alterado com sucesso!", HttpStatus.OK);
+			return new ResponseEntity<>(
+				"Produto alterado com sucesso!", 
+					HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>("Não foi possível encontrar o Produto.", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(
+				"Não foi possível encontrar o Produto.", 
+					HttpStatus.NOT_FOUND);
 		}
 	}
 
 	@Operation(summary="Remover um produto do banco de dados")
     @ApiResponses(value = {
-            @ApiResponse(responseCode="200", description="Sucesso ao remover o produto"),
-            @ApiResponse(responseCode="400", description="Falha ao remover produto do banco de dados, verifique a requisição")
+            @ApiResponse(responseCode="200", 
+				description="Sucesso ao remover o produto"),
+            @ApiResponse(responseCode="400", 
+				description=
+					"Falha ao remover produto do banco de dados, verifique a requisição")
         }
     )
 	@DeleteMapping("/{id}")
@@ -145,7 +177,8 @@ public class ProdutoCtrl {
 			produtoService.deleteById(id);
 			return new ResponseEntity<>("Produto excluído com sucesso!", HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>("Não foi possível excluir o Produto.", HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>("Não foi possível excluir o Produto.",
+				HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

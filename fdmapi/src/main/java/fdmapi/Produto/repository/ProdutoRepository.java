@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import fdmapi.produto.model.Categoria;
+import fdmapi.categoria.model.Categoria;
 import fdmapi.produto.model.Produto;
 
 public interface ProdutoRepository extends CrudRepository<Produto, Long>{
