@@ -47,7 +47,7 @@ public class Produto {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "produto_id")
-    private List<Sku> skus = new ArrayList<>();
+    private final List<Sku> skus = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "categoria_id")
