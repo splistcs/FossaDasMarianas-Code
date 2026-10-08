@@ -1,7 +1,5 @@
 package fdmapi.categoria.repository;
 
-import java.util.List;
-
 import org.springframework.data.repository.CrudRepository;
 
 import fdmapi.categoria.model.Categoria;
