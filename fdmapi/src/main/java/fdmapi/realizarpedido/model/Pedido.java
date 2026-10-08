@@ -57,9 +57,9 @@ public class Pedido {
   private StatusPedido statusPedido;
 
   /* A implementação de endereco vai depender do cadastro. */
-  // @ManyToOne
-  // @JoinColumn(name = "endereco_id")
-  // private Endereco endereco;
+  @ManyToOne
+  @JoinColumn(name = "endereco_id")
+  private Endereco endereco;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinTable(name = "pedido_item", 
