@@ -20,7 +20,7 @@ public record CadastroDto (
 
     @NotBlank(message = "Senha inválida") String senha,
 
-    @NotBlank(message = "Tipo de cadastro não está informado") Cadastro.TipoCadastro TipoCadastro
+    @NotNull(message = "Tipo de cadastro não está informado") Cadastro.TipoCadastro TipoCadastro
 ) {
     public static CadastroDto from (Cadastro cadastro){
         return new CadastroDto(cadastro.getId(), cadastro.getNomeCompleto(), cadastro.getEmail(),
