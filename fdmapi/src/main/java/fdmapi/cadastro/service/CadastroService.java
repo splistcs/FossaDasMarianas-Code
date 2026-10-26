@@ -53,6 +53,14 @@ public class CadastroService {
         return cadastroRepository.save(cadastro);
     }
 
+    public boolean existeEmail(String email) {
+        return cadastroRepository.existsByEmail(email);
+    }
+
+    public boolean existeCpf(String cpf) {
+        return cadastroRepository.existsByCpf(cpf);
+    }
+
     public Cadastro save(Cadastro cadastro) {
         return cadastroRepository.save(cadastro);
     }
