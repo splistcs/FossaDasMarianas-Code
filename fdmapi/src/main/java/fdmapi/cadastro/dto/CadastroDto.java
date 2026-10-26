@@ -4,8 +4,12 @@ import fdmapi.cadastro.model.Cadastro;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * DTO de ENTRADA do Manter Cadastro (UC03).
+ * Respostas usam CadastroRespostaDto, que não contém a senha.
+ */
 public record CadastroDto (
-    
+
     Long id,
 
     @NotBlank(message = "Nome Inválido") String nomeCompleto,
@@ -20,10 +24,15 @@ public record CadastroDto (
 
     @NotBlank(message = "Senha inválida") String senha,
 
+    // @NotBlank só vale para texto; para enum, o correto é @NotNull
     @NotNull(message = "Tipo de cadastro não está informado") Cadastro.TipoCadastro TipoCadastro
 ) {
-    public static CadastroDto from (Cadastro cadastro){
-        return new CadastroDto(cadastro.getId(), cadastro.getNomeCompleto(), cadastro.getEmail(),
-            cadastro.getCpf(), cadastro.getTelefone(), cadastro.isAtivo(), cadastro.getSenha(), cadastro.getTipoCadastro());
+    // O toString() padrão de um record imprime todos os componentes,
+    // o que levaria a senha para o log. Aqui ela é mascarada.
+    @Override
+    public String toString() {
+        return "CadastroDto[id=" + id + ", nomeCompleto=" + nomeCompleto + ", email=" + email
+            + ", CPF=" + CPF + ", telefone=" + telefone + ", ativo=" + ativo
+            + ", senha=*****, TipoCadastro=" + TipoCadastro + "]";
     }
 }
