@@ -61,6 +61,30 @@ public class CadastroService {
         return cadastroRepository.existsByCpf(cpf);
     }
 
+    /*
+     * Solicitações de cadastro (UC02).
+     * Nesta versão, "solicitação pendente" = cliente inativo. Esse significado
+     * fica concentrado nos três métodos abaixo: se o modelo ganhar um status
+     * próprio (ex.: enum StatusCadastro), só eles precisam mudar.
+     */
+    public List<Cadastro> getSolicitacoesPendentes() {
+        return cadastroRepository.findByAtivoFalseAndTipoCadastro(Cadastro.TipoCadastro.CLIENTE);
+    }
+
+    public boolean isSolicitacaoPendente(Cadastro cadastro) {
+        return !cadastro.isAtivo() && cadastro.getTipoCadastro() == Cadastro.TipoCadastro.CLIENTE;
+    }
+
+    public Cadastro aprovarSolicitacao(Cadastro cadastro) {
+        cadastro.setAtivo(true);
+        return cadastroRepository.save(cadastro);
+    }
+
+    // Exclui o cadastro e, pela cascata, os seus endereços
+    public void excluir(Cadastro cadastro) {
+        cadastroRepository.delete(cadastro);
+    }
+
     public Cadastro save(Cadastro cadastro) {
         return cadastroRepository.save(cadastro);
     }

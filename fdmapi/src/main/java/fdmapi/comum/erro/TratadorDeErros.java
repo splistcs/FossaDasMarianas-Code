@@ -24,8 +24,16 @@ import lombok.extern.log4j.Log4j2;
  * acrescentados à lista.
  */
 @Log4j2
-@RestControllerAdvice(basePackages = { "fdmapi.solicitarcadastro" })
+@RestControllerAdvice(basePackages = { "fdmapi.solicitarcadastro", "fdmapi.validarsolicitacao" })
 public class TratadorDeErros {
+
+    // 404: recurso inexistente (ex.: id de solicitação que não existe)
+    @ExceptionHandler(NaoEncontradoException.class)
+    public ProblemDetail tratarNaoEncontrado(NaoEncontradoException e) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        problema.setTitle("Não encontrado");
+        return problema;
+    }
 
     // 409: regra de negócio violada (ex.: e-mail já cadastrado)
     @ExceptionHandler(ConflitoException.class)
