@@ -27,10 +27,6 @@ public class CadastroService {
         return cadastroRepository.findAll();
     }
 
-    /*
-     * Os métodos *Dto convertem as entidades dentro da transação, enquanto
-     * a lista de endereços (LAZY) ainda pode ser carregada do banco.
-     */
     @Transactional(readOnly = true)
     public List<CadastroRespostaDto> getAllDto() {
         List<CadastroRespostaDto> dtos = new ArrayList<>();
@@ -45,7 +41,7 @@ public class CadastroService {
 
     /**
      * Grava um cadastro novo, armazenando apenas o hash BCrypt da senha.
-     * Use este método para cadastros novos; o save() não altera a senha.
+     * Use este método para cadastros novos.
      */
     @Transactional
     public Cadastro cadastrar(Cadastro cadastro, String senha) {

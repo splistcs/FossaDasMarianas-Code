@@ -24,11 +24,10 @@ public record CadastroDto (
 
     @NotBlank(message = "Senha inválida") String senha,
 
-    // @NotBlank só vale para texto; para enum, o correto é @NotNull
+    
     @NotNull(message = "Tipo de cadastro não está informado") Cadastro.TipoCadastro TipoCadastro
 ) {
-    // O toString() padrão de um record imprime todos os componentes,
-    // o que levaria a senha para o log. Aqui ela é mascarada.
+    
     @Override
     public String toString() {
         return "CadastroDto[id=" + id + ", nomeCompleto=" + nomeCompleto + ", email=" + email
