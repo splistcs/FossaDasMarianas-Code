@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import fdmapi.produto.model.Sku;
+import fdmapi.produto.dto.SkuDto;
 import fdmapi.produto.repository.SkuRepository;
 
 @Service
@@ -26,6 +27,12 @@ public class SkuService {
 
 	public Optional<Sku> findById(Long id) {
 		return skuRepository.findById(id);
+	}
+
+  public SkuDto findByIdDto(Long id) {
+    Optional<Sku> s = skuRepository.findById(id);
+		SkuDto skuDto = (s.isEmpty()) ? null : SkuDto.from(s.get());
+    return skuDto;
 	}
 
 	public void deleteById(Long id) throws Exception {

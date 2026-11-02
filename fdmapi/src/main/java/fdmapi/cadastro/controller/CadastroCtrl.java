@@ -136,7 +136,7 @@ public class CadastroCtrl {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        log.info("delete( Id " + id + " )");
+  //      log.info("delete( Id " + id + " )");
 
         try {
             cadastroService.deleteById(id);

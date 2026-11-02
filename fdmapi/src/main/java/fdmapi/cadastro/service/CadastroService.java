@@ -1,4 +1,4 @@
-package fdmapi.cadastro.service;
+/*package fdmapi.cadastro.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,4 +100,4 @@ public class CadastroService {
             throw e;
         }
     }
-}
+}*/

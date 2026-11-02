@@ -12,15 +12,20 @@ public record ProdutoDto(
 
     Long id,
 
-    @NotBlank(message = "nome inválido") String nome,
+    //@NotBlank(message = "nome inválido") 
+    String nome,
 
-    @NotBlank(message = "descricao inválida") String descricao,
+    //@NotBlank(message = "descricao inválida") 
+    String descricao,
 
-    @NotBlank(message = "material inválido") String material,
+    //@NotBlank(message = "material inválido") 
+    String material,
 
-    @NotBlank(message = "marca inválida") String marca,
+    //@NotBlank(message = "marca inválida") 
+    String marca,
 
-    @NotNull(message = "campo ativo inválido") Boolean ativo,
+    //@NotNull(message = "campo ativo inválido")
+    Boolean ativo,
 
     String imagemPrincipalUrl,
 
@@ -32,7 +37,7 @@ public record ProdutoDto(
     public static ProdutoDto from (Produto produto){
         return new ProdutoDto(produto.getId(), produto.getNome(), 
             produto.getDescricao(), produto.getMaterial(), produto.getMarca(),
-                produto.getAtivo(), produto.getImagemPrincipalUrl(), produto.getSkus(),
-                    produto.getCategoria());
+                produto.getAtivo(), produto.getImagemPrincipalUrl(), 
+                  produto.getSkus(), produto.getCategoria());
     }
 }

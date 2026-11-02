@@ -52,7 +52,7 @@ public class CategoriaCtrl {
     )
 	@GetMapping
 	public @ResponseBody Iterable<Categoria> getAll() {
-		log.info("getAll()");
+//		log.info("getAll()");
 		return categoriaService.getAll();
 	}
 

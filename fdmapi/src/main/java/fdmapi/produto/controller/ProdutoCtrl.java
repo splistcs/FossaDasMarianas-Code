@@ -100,6 +100,7 @@ public class ProdutoCtrl {
 
 		try {
 			Produto produto = new Produto();
+      /*
 			produto.setNome(produtoDto.nome());
 			produto.setDescricao(produtoDto.descricao());
 			produto.setMaterial(produtoDto.material());
@@ -108,11 +109,13 @@ public class ProdutoCtrl {
 			produto.setImagemPrincipalUrl(produtoDto.imagemPrincipalUrl());
 			produto.setSkus(produtoDto.skus());
 			produto.setCategoria(produtoDto.categoria());
+      */
 
 			Produto produtoSalvo = produtoService.save(produto);
 
 			return new ResponseEntity<>(ProdutoDto.from(produtoSalvo), HttpStatus.CREATED);
 		} catch (Exception e) {
+      log.error("Erro ao criar produto", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
