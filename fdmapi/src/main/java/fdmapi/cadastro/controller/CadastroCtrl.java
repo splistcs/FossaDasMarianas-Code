@@ -1,5 +1,6 @@
 package fdmapi.cadastro.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,12 +20,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import lombok.extern.log4j.Log4j2;
 
 import fdmapi.cadastro.dto.CadastroDto;
+import fdmapi.cadastro.dto.CadastroRespostaDto;
 import fdmapi.cadastro.model.Cadastro;
 import fdmapi.cadastro.service.CadastroService;
 
@@ -34,14 +34,14 @@ import fdmapi.cadastro.service.CadastroService;
 @RequestMapping(path = "/fdm/cadastros")
 @RestController
 public class CadastroCtrl {
-    
+
     private final CadastroService cadastroService;
 
     public CadastroCtrl(CadastroService cadastroService) {
         this.cadastroService=cadastroService;
     }
 
-    @Operation(summary="Retornar toos os cadastros")
+    @Operation(summary="Retornar todos os cadastros")
     @ApiResponses(value = {
         @ApiResponse(responseCode="200", description = "Sucesso ao retornar todos os cadastros"),
         @ApiResponse(responseCode = "404", description = "Falha ao encontrar cadastros no banco de dados"),
@@ -49,9 +49,9 @@ public class CadastroCtrl {
         }
     )
     @GetMapping
-    public @ResponseBody Iterable<Cadastro> getAll() {
+    public List<CadastroRespostaDto> getAll() {
         log.info("getAll()");
-        return cadastroService.getAll();
+        return cadastroService.getAllDto();
     }
 
     @Operation(summary="Retornar um cadastro específico")
@@ -62,18 +62,10 @@ public class CadastroCtrl {
         }
     )
     @GetMapping("/{id}")
-    public @ResponseBody Optional<Cadastro> getCadastro(@PathVariable Long id, HttpServletResponse response) {
-        try {
-            Optional<Cadastro>cadastro = cadastroService.findById(id);
-            if (cadastro == null) {
-                response.setStatus(HttpStatus.NOT_FOUND.value());
-                return null;
-            }
-            return cadastro;
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return null;
-        }
+    public ResponseEntity<CadastroRespostaDto> getCadastro(@PathVariable Long id) {
+        log.info("getCadastro( Id " + id + " )");
+        // ResponseEntity.of: 200 com o corpo se o Optional tiver valor; 404 se estiver vazio
+        return ResponseEntity.of(cadastroService.getDtoPorId(id));
     }
 
     @Operation(summary = "Inserir um novo cadastro no banco de dados")
@@ -83,7 +75,7 @@ public class CadastroCtrl {
         }
     )
     @PostMapping
-    public ResponseEntity<CadastroDto> create(@Valid @RequestBody CadastroDto cadastroDto) {
+    public ResponseEntity<CadastroRespostaDto> create(@Valid @RequestBody CadastroDto cadastroDto) {
         log.info("create (" + cadastroDto + " )");
 
         try {
@@ -95,10 +87,11 @@ public class CadastroCtrl {
             cadastro.setAtivo(cadastroDto.ativo());
             cadastro.setTipoCadastro(cadastroDto.TipoCadastro());
 
-            Cadastro cadastroSalvo = cadastroService.save(cadastro);
+            Cadastro cadastroSalvo = cadastroService.cadastrar(cadastro, cadastroDto.senha());
 
-            return new ResponseEntity<>(CadastroDto.from(cadastroSalvo), HttpStatus.CREATED);
+            return new ResponseEntity<>(CadastroRespostaDto.from(cadastroSalvo), HttpStatus.CREATED);
         } catch (Exception e) {
+            log.error("Erro ao inserir cadastro", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -149,6 +142,7 @@ public class CadastroCtrl {
             cadastroService.deleteById(id);
             return new ResponseEntity<>("Cadastro excluído com sucesso!", HttpStatus.OK);
         } catch (Exception e) {
+            log.error("Erro ao excluir cadastro " + id, e);
             return new ResponseEntity<>("Não foi possível excluir o cadastro.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

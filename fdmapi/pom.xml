@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>FDM</groupId>
 	<artifactId>api</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.1</version>
 	<name/>
 	<description/>
 	<url/>
@@ -28,9 +28,29 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
-   		<lombok.version>1.18.48</lombok.version>
+		<lombok.version>1.18.48</lombok.version>
 	</properties>
 	<dependencies>
+		<!--
+			Log4j 2 no lugar do Logback (padrão do Spring Boot).
+			Declarar o spring-boot-starter diretamente, com a exclusão, faz com que
+			a exclusão valha para todos os starters que o trazem transitivamente.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -39,6 +59,22 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
+
+		<!-- Bean Validation (Hibernate Validator): @NotBlank, @Email, @CPF etc. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!--
+			Apenas o módulo de criptografia do Spring Security (BCryptPasswordEncoder).
+			Não ativa autenticação nem bloqueia endpoints; isso virá com o UC04.
+		-->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -48,7 +84,6 @@
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-community-dialects</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -66,6 +101,14 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- Para algoritmos de cálculo de distância entre Strings (UC07) -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.15.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
@@ -76,13 +119,6 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-    <!-- Para algoritmos de calc de distância de String -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-text</artifactId>
-      <version>1.15.0</version>
-    </dependency>
 	</dependencies>
 
 	<build>
