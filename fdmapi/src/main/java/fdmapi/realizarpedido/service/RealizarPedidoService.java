@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 /* Spring import*/
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /* FossaDasMarinanas fdmapi import */
 import fdmapi.realizarpedido.model.Pedido;
@@ -21,10 +22,10 @@ import fdmapi.realizarpedido.repository.PedidoRepository;
 import fdmapi.realizarpedido.service.AcquireMockService;
 import fdmapi.realizarpedido.dto.AcquireMockWebhookDto;
 
-import fdmapi.mantercadastro.model.Cliente;
-import fdmapi.mantercadastro.dto.ClienteDto;
-import fdmapi.mantercadastro.dto.EnderecoDto;
-import fdmapi.mantercadastro.service.ManterCadastroService;
+import fdmapi.cadastro.model.Cadastro;
+import fdmapi.cadastro.dto.CadastroDto;
+import fdmapi.endereco.dto.EnderecoDto;
+import fdmapi.cadastro.service.CadastroService;
 
 import fdmapi.produto.model.Sku;
 import fdmapi.produto.dto.SkuDto;
@@ -36,31 +37,28 @@ import fdmapi.produto.service.SkuService;
  * obs. E1: param inválidos  == BAD_REQUEST (400)
  *      E2: sem permissão    == UNAUTHORIZED (401)
  *      E3: erros no db      == NOT_FOUND (404)
- *      E4: error de negócio == ?
- * @author Magocho
  */
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class RealizarPedidoService {
 	private final PedidoRepository pedidoRepository;
 	private final ItemRepository itemRepository;
 	private final SkuService skuService;
-	private final ManterCadastroService manterCadastroService;
-  private final AcquireMockService acquireMockService;
+	private final CadastroService cadastroService;
 
 	public RealizarPedidoService(PedidoRepository pedidoRepository,
       ItemRepository itemRepository, SkuService skuService,
-      ManterCadastroService manterCadastroService, 
-      AcquireMockService acquireMockService) {
+      CadastroService cadastroService) {
 
 		this.pedidoRepository = pedidoRepository;
 		this.itemRepository = itemRepository;
     this.skuService = skuService;
-    this.manterCadastroService = manterCadastroService;
-    this.acquireMockService = acquireMockService;
+    this.cadastroService = cadastroService;
   }
 
   /* OK */
+  @Transactional(readOnly = true)
   public List<ItemDto> getAllItemPorPedido(Long pedidoId) throws Exception {
     if(pedidoId == null || pedidoId < 0) {
       throw new Exception("E1");
@@ -81,34 +79,34 @@ public class RealizarPedidoService {
   }
 
   /* OK ? */
-  public ItemDto poeCarrinhoItem(Long clienteId, Long skuId, Integer quant) throws Exception {
+  public ItemDto poeCarrinhoItem(Long cadastroId, Long skuId, Integer quant) throws Exception {
     if(quant == null || quant <= 0) {
       throw new Exception("E1");
     }
 
-    if(!manterCadastroService.confirmaClientePorId(clienteId)) {
+    if(!cadastroService.confirmaCadastroPorId(cadastroId)) {
       throw new Exception("E2");
     }
 
-    Pedido carrinho = pedidoRepository.selectPorClienteIdEStatusPedido(clienteId, StatusPedido.CARRINHO);
+    Pedido carrinho = pedidoRepository.selectPorCadastroIdEStatusPedido(cadastroId, StatusPedido.CARRINHO);
 
     if(carrinho == null) {
-      Cliente cliente = manterCadastroService.findClienteById(clienteId).orElse(null);
-      if(cliente == null) {
+      Cadastro cadastro = cadastroService.findCadastroById(cadastroId).orElse(null);
+      if(cadastro == null) {
         throw new Exception("E3");
       }
 
       carrinho = new Pedido();
       carrinho.setStatusPedido(StatusPedido.CARRINHO);
 
-      if(cliente.getPedidos() == null) {
-        cliente.setPedidos(new ArrayList<>());
+      if(cadastro.getPedidos() == null) {
+        cadastro.setPedidos(new ArrayList<>());
       }
 
-      cliente.getPedidos().add(carrinho);
-      manterCadastroService.save(cliente);
+      cadastro.getPedidos().add(carrinho);
+      cadastroService.save(cadastro);
 
-      carrinho = pedidoRepository.selectPorClienteIdEStatusPedido(clienteId, StatusPedido.CARRINHO);
+      carrinho = pedidoRepository.selectPorCadastroIdEStatusPedido(cadastroId, StatusPedido.CARRINHO);
     }
 
     Sku sku = skuService.findById(skuId).orElse(null);
@@ -176,12 +174,12 @@ public class RealizarPedidoService {
       throw new Exception("E1");
     }
 
-    Pedido carrinho = pedidoRepository.selectPorClienteIdEStatusPedido(id, StatusPedido.CARRINHO);
+    Pedido carrinho = pedidoRepository.selectPorCadastroIdEStatusPedido(id, StatusPedido.CARRINHO);
 
     if(carrinho == null) {
-      Cliente cliente = manterCadastroService.findClienteById(id).orElse(null);
+      Cadastro cadastro = cadastroService.findCadastroById(id).orElse(null);
 
-      if(cliente == null) {
+      if(cadastro == null) {
         throw new Exception("E3");
       }
 
@@ -191,36 +189,38 @@ public class RealizarPedidoService {
       carrinho.setEndereco(null);
       carrinho = pedidoRepository.save(carrinho);
 
-      if(cliente.getPedidos() == null) {
-        cliente.setPedidos(new ArrayList<>());
+      if(cadastro.getPedidos() == null) {
+        cadastro.setPedidos(new ArrayList<>());
       }
 
-      cliente.getPedidos().add(carrinho);
-      cliente = manterCadastroService.save(cliente);
+      cadastro.getPedidos().add(carrinho);
+      cadastro = cadastroService.save(cadastro);
     }
 
     return PedidoDto.from(carrinho);
 	}
 
   /* OK */
+  @Transactional(readOnly = true)
   public PedidoDto getPedidoDtoPorId(Long id) {
     return PedidoDto.from(pedidoRepository.findById(id).orElse(null));
   }
 
   /* OK */
-  public List<PedidoDto> getAllPedidoDtoPorClienteId(Long id) throws Exception {    
+  @Transactional(readOnly = true)
+  public List<PedidoDto> getAllPedidoDtoPorCadastroId(Long id) throws Exception {    
     if(id == null || id < 0) {
       throw new Exception("E1");
     }
 
-    Cliente cliente = manterCadastroService.findClienteById(id).orElse(null);
+    Cadastro cadastro = cadastroService.findCadastroById(id).orElse(null);
 
-    if(cliente == null) {
+    if(cadastro == null) {
       throw new Exception("E3");
     }
 
     List<PedidoDto> pedidoDtos = new ArrayList<>();
-    for(Pedido p : cliente.getPedidos()) {
+    for(Pedido p : cadastro.getPedidos()) {
       pedidoDtos.add(PedidoDto.from(p));
     }
 
@@ -236,11 +236,6 @@ public class RealizarPedidoService {
 		}
     pedidoRepository.deleteById(id);
 	}
-
-  /* OK */
-  public Pedido findPedidoPorId(Long id) {
-    return pedidoRepository.findById(id).orElse(null);
-  }
 
   // TODO implementar CANCELADO
   public PedidoDto atualizarPedidoPorId(Long id) {
@@ -267,8 +262,8 @@ public class RealizarPedidoService {
     return PedidoDto.from(p);
 	}
 
-  // TODO alterar os sku
-  public String iniciarPagamento(Long id) throws Exception {
+  // TODO confirmar o sku
+  public BigDecimal prepararPagamento(Long id) throws Exception {
     Pedido p = pedidoRepository.findById(id).orElse(null);
 
     if(p == null) {
@@ -292,34 +287,27 @@ public class RealizarPedidoService {
       throw new RuntimeException("E1");
     }
 
+
     p.setValorTotal(total);
     pedidoRepository.save(p);
 
-    String pageUrl = acquireMockService.criarPagamento(
-        p.getValorTotal(), p.getId());
+    return total;
+  }
 
-    p.setStatusPedido(StatusPedido.PENDENTE);
+  public void atualizarStatusPedido(Long id, StatusPedido status) throws Exception {
+    Pedido p = pedidoRepository.findById(id).orElse(null);
+
+    if(p == null) {
+      throw new Exception("E3");
+    }
+
+    p.setStatusPedido(status);
+
     pedidoRepository.save(p);
+  }
 
-    return pageUrl;
-  }  
-
-  // TODO Arrumar esse JSON e enderecoDto?
-  public void processarWebhook(String PythonJSON, 
-      String assinatura) throws Exception {
-    AcquireMockWebhookDto webhook = acquireMockService.verificarAssinatura(PythonJSON, assinatura);
-
-    if(webhook == null) {
-      throw new Exception("E1");
-    }
-
-    if(webhook.status() == null) {
-      return;
-    }
-
-    Integer id = Integer.valueOf(webhook.reference().toString());
-
-    Pedido p = this.findPedidoPorId(new Long(id));
+  public void confirmarPagamento(Long id) throws Exception {
+    Pedido p = pedidoRepository.findById(id).orElse(null);
 
     if(p == null) {
       throw new Exception("E3");

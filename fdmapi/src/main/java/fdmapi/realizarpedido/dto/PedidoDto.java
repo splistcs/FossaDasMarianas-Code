@@ -11,8 +11,8 @@ import fdmapi.realizarpedido.model.Pedido;
 import fdmapi.realizarpedido.model.StatusPedido;
 import fdmapi.realizarpedido.model.Item;
 import fdmapi.realizarpedido.dto.ItemDto;
-import fdmapi.mantercadastro.model.Endereco;
-import fdmapi.mantercadastro.dto.EnderecoDto;
+import fdmapi.endereco.model.Endereco;
+import fdmapi.endereco.dto.EnderecoDto;
 
 /**
  * PedidoDto

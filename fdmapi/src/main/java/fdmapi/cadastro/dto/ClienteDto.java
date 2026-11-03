@@ -1,16 +1,12 @@
-package fdmapi.mantercadastro.dto;
+// package fdmapi.mantercadastro.dto;
 
-/* Java import */
+/* Java import 
 import java.util.List;
 import java.util.ArrayList;
 
-/* FossaDasMarinanas fdmapi import */
+ FossaDasMarinanas fdmapi import */
+/*
 import fdmapi.mantercadastro.model.Cliente;
-import fdmapi.realizarpedido.model.Pedido;
-import fdmapi.realizarpedido.dto.PedidoDto;
-import fdmapi.mantercadastro.model.TipoCadastro;
-import fdmapi.mantercadastro.model.Endereco;
-import fdmapi.mantercadastro.dto.EnderecoDto;
 
 public record ClienteDto (Long id, String nomeCompleto, String email, 
     String cpf, String telefone, Boolean ativo, String senha, 
@@ -23,7 +19,6 @@ public record ClienteDto (Long id, String nomeCompleto, String email,
         c.getTipoCadastro(), null, null);
   }
 
-  // TODO tratar quando EnderecoDto e PedidoDto forem null
   public static ClienteDto from (Cliente c) {
     List<PedidoDto> pedidoDtos = new ArrayList<>();
     List<EnderecoDto> enderecoDtos = new ArrayList<>();
@@ -41,3 +36,4 @@ public record ClienteDto (Long id, String nomeCompleto, String email,
         c.getTipoCadastro(), pedidoDtos, enderecoDtos);
   }
 }
+*/

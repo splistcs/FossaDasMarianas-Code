@@ -25,7 +25,7 @@ import jakarta.persistence.JoinTable;
 /* FossaDasMarinanas fdmapi import */
 import fdmapi.realizarpedido.model.StatusPedido;
 import fdmapi.realizarpedido.model.Item;
-import fdmapi.mantercadastro.model.Endereco;
+import fdmapi.endereco.model.Endereco;
 
 /* Misc. import */
 import lombok.Getter;

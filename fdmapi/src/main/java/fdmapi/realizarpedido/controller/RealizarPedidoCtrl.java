@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 
 /* FossaDasMarinanas fdmapi import */
 import fdmapi.realizarpedido.service.RealizarPedidoService;
+import fdmapi.realizarpedido.service.AcquireMockService;
 import fdmapi.realizarpedido.dto.ItemDto;
 import fdmapi.realizarpedido.dto.PedidoDto;
 import fdmapi.realizarpedido.model.StatusPedido;
@@ -31,13 +32,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-
 /**
  * RealizarPedidoCtrl
  * Objetivo é fornecer a API para o ciclo de vida de um Pedido
  * e por consequência do Item também.
- *
- * @author Magocho
  */
 
 @Tag(name = "realizarpedido", description = "API para realizar pedido.")
@@ -45,9 +43,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 public class RealizarPedidoCtrl {
   private final RealizarPedidoService realizarPedidoService;
+  private final AcquireMockService acquireMockService;
 
-  public RealizarPedidoCtrl(RealizarPedidoService realizarPedidoService) {
+  public RealizarPedidoCtrl(RealizarPedidoService realizarPedidoService,
+      AcquireMockService acquireMockService) {
     this.realizarPedidoService = realizarPedidoService;
+    this.acquireMockService = acquireMockService;
   }
 
   /** [1] Ciclo de vida de Item */
@@ -61,11 +62,11 @@ public class RealizarPedidoCtrl {
       @ApiResponse(responseCode = "404", description = "Nenhum item encontrado."),
   })
 	@PostMapping(path = "/item")
-	public ResponseEntity<ItemDto> setItemSemSenha(@RequestParam Long clienteId,
+	public ResponseEntity<ItemDto> setItemSemSenha(@RequestParam Long cadastroId,
       @RequestParam Long skuId, @RequestParam Integer quant) {
 
     try {
-      ItemDto itemDto = realizarPedidoService.poeCarrinhoItem(clienteId, skuId, quant);
+      ItemDto itemDto = realizarPedidoService.poeCarrinhoItem(cadastroId, skuId, quant);
 
       return new ResponseEntity<>(itemDto, HttpStatus.OK);
     } catch (Exception e) {
@@ -75,6 +76,7 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -99,6 +101,7 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 	}
@@ -114,6 +117,7 @@ public class RealizarPedidoCtrl {
 			realizarPedidoService.deletarItemPorId(id);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
+      e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -139,6 +143,7 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 	}
@@ -149,13 +154,13 @@ public class RealizarPedidoCtrl {
   @Operation(summary = "Criar Pedido", description = "Cria o pedido, todos começam como CARRINHO")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Pedido criado!"),
-      @ApiResponse(responseCode = "400", description = "Cliente não encontrado."),
+      @ApiResponse(responseCode = "400", description = "Cadastro não encontrado."),
       @ApiResponse(responseCode = "404", description = "Erros no db."),
   })
   @PostMapping("/pedido") 
-  public ResponseEntity<PedidoDto> criarPedido(@RequestParam Long clienteId) {
+  public ResponseEntity<PedidoDto> criarPedido(@RequestParam Long cadastroId) {
     try {
-      PedidoDto pedidoDto = realizarPedidoService.getCarrinho(clienteId);
+      PedidoDto pedidoDto = realizarPedidoService.getCarrinho(cadastroId);
       
       return new ResponseEntity<>(pedidoDto, HttpStatus.OK);
     } catch (Exception e) {
@@ -165,6 +170,7 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -187,16 +193,16 @@ public class RealizarPedidoCtrl {
   }
 
   /* R - ler todos */
-  @Operation(summary = "Listar Pedidos de um Cliente", description = "Retorna a lista")  
+  @Operation(summary = "Listar Pedidos de um Cadastro", description = "Retorna a lista")  
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Pedidos encontrados!"),
-      @ApiResponse(responseCode = "400", description = "Cliente não encontrado."),
+      @ApiResponse(responseCode = "400", description = "Cadastro não encontrado."),
       @ApiResponse(responseCode = "404", description = "Erros no db."),
   })
   @GetMapping("/pedidos")
-  public ResponseEntity<List<PedidoDto>> getPedidosPorCliente(@RequestParam Long clienteId) {
+  public ResponseEntity<List<PedidoDto>> getPedidosPorCadastro(@RequestParam Long cadastroId) {
     try {
-      List<PedidoDto> pedidoDtos = realizarPedidoService.getAllPedidoDtoPorClienteId(clienteId);
+      List<PedidoDto> pedidoDtos = realizarPedidoService.getAllPedidoDtoPorCadastroId(cadastroId);
       
       return new ResponseEntity<>(pedidoDtos, HttpStatus.OK);
     } catch (Exception e) {
@@ -206,6 +212,7 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -214,7 +221,6 @@ public class RealizarPedidoCtrl {
    * AVISO: USAR COM PARCIMÔNIA, PREFIRA:
    * @see alterarStatusPedido
    * */
-
   /* D - Remover */
   @Operation(summary = "Remover um pedido por Id", description = "Deleta o pedido")
   @ApiResponses({
@@ -232,15 +238,13 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   /* U - Atualizar */
   // TODO CANCELAR
-  // Ta ta ta ta ra rara papa (Charles)
-  // "Derrubando o db"
-  // sqlite3 NOT_FOUND
   @Operation(summary = "Atualizar status do pedido", description = "Transiciona o status (PAGO -> ENVIADO -> ENTREGUE ou CANCELADO).")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Pedido atualizado!"),
@@ -262,6 +266,7 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }   
   }
@@ -277,7 +282,7 @@ public class RealizarPedidoCtrl {
   @PostMapping("/pedido/{id}/pagamento")
   public ResponseEntity<String> iniciarPagamento(@PathVariable Long id) {
     try {
-      String url = realizarPedidoService.iniciarPagamento(id);
+      String url = acquireMockService.iniciarPagamento(id);
 
       return new ResponseEntity<>(url, HttpStatus.OK);
 
@@ -290,17 +295,11 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  // TODO apagar isso
-  /* SR Littorio - curl Bombardamento! */
-  /* Oh no! SUPER EFFECTIVE............*/
-  /* R: -1 hp docker               */
-  /* SSSSR Murakami: "Como funciona pagamento?" */
-  /* MEGA CRITICAL, OVERKILL! - infinito */
-  /* R: SR Littorio sunk! docker morto! Magocho sad effect... */
   @Operation(summary = "Receber webhook do AcquireMock", description = "Recebe a atualização de um pagamento")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Processado"),
@@ -309,11 +308,11 @@ public class RealizarPedidoCtrl {
   })
   @PostMapping("/webhook/acquiremock")
   public ResponseEntity<Void> receberWebhook(
-      @RequestBody String PythonLOVE,
+      @RequestBody String PythonJSON,
       @RequestHeader(value = "X-Signature", required = false) String assinatura) {
 
     try {
-      realizarPedidoService.processarWebhook(PythonLOVE, assinatura);
+      acquireMockService.processarWebhook(PythonJSON, assinatura);
 
       return new ResponseEntity<>(HttpStatus.OK);
     } catch (Exception e) {
@@ -324,6 +323,7 @@ public class RealizarPedidoCtrl {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
 
+      e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

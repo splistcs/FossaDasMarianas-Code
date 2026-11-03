@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 /* FossaDasMarinanas fdmapi import */
 import fdmapi.realizarpedido.dto.AcquireMockInvoiceDto;
 import fdmapi.realizarpedido.dto.AcquireMockWebhookDto;
+import fdmapi.realizarpedido.model.StatusPedido;
 
 /* Misc. */
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,6 +37,21 @@ public class AcquireMockService {
   private final String TICKET = "http://localhost:8000/api/create-invoice";
   private final HttpClient httpClient = HttpClient.newHttpClient();
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private final RealizarPedidoService realizarPedidoService;
+
+  public AcquireMockService(RealizarPedidoService realizarPedidoService) {
+    this.realizarPedidoService = realizarPedidoService;
+  }
+
+  public String iniciarPagamento(Long id) throws Exception {
+    BigDecimal total = realizarPedidoService.prepararPagamento(id);
+
+    String pageUrl = criarPagamento(total, id);
+
+    realizarPedidoService.atualizarStatusPedido(id, StatusPedido.PENDENTE);
+
+    return pageUrl;
+  }
 
   public String criarPagamento(BigDecimal valor, Long id) throws Exception {
     Integer valorAjustado = valor.multiply(BigDecimal.valueOf(100)).intValue();
@@ -70,7 +86,24 @@ public class AcquireMockService {
     return body.get("pageUrl").asText();
   }
 
-  // ISSO SÓ RETORNA TRUE
+  // TODO Arrumar esse JSON e enderecoDto?
+  public void processarWebhook(String PythonJSON, 
+      String assinatura) throws Exception {
+    AcquireMockWebhookDto webhook = this.verificarAssinatura(PythonJSON, assinatura);
+
+    if(webhook == null) {
+      throw new Exception("E1");
+    }
+
+    if(webhook.status() == null) {
+      return;
+    }
+
+    Long id = Long.valueOf(webhook.reference().toString());
+
+    realizarPedidoService.confirmarPagamento(id);
+  }
+
   // TODO Uhm, sudo pacman -Rns python3 ?
   public AcquireMockWebhookDto verificarAssinatura(String rawPayload, 
       String assinatura) throws Exception {

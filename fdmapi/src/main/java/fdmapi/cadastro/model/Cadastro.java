@@ -3,6 +3,7 @@ package fdmapi.cadastro.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import fdmapi.realizarpedido.model.Pedido;
 import fdmapi.endereco.model.Endereco;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +54,12 @@ public class Cadastro {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoCadastro tipoCadastro;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "cadastro_pedido", 
+        joinColumns = @JoinColumn(name = "cadastro_id"), 
+        inverseJoinColumns = @JoinColumn(name = "pedido_id"))
+    private List<Pedido> pedidos;
 
     /*
      * Composição Cadastro -> Endereco (1..*), unidirecional como no diagrama.

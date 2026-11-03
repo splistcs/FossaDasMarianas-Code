@@ -1,4 +1,4 @@
-package fdmapi.mantercadastro.repository;
+package fdmapi.endereco.repository;
 
 /* Java import */
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /* FossaDasMarinanas fdmapi import */
-import fdmapi.mantercadastro.model.Endereco;
+import fdmapi.endereco.model.Endereco;
 
 public interface EnderecoRepository extends CrudRepository<Endereco, Long> {
 

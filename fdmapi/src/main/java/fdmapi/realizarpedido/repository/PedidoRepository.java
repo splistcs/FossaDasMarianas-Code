@@ -17,10 +17,10 @@ public interface PedidoRepository extends CrudRepository<Pedido, Long> {
 
   /* Obs. Depende da implementação de Cliente. */
    @Query("SELECT p "
-         +"FROM Cliente c JOIN c.pedidos p "
-         +"WHERE c.id = :clienteId AND p.statusPedido = :statusPedido")
+         +"FROM Cadastro c JOIN c.pedidos p "
+         +"WHERE c.id = :cadastroId AND p.statusPedido = :statusPedido")
 
-  Pedido selectPorClienteIdEStatusPedido(
-      @Param("clienteId") Long clienteId, 
+  Pedido selectPorCadastroIdEStatusPedido(
+      @Param("cadastroId") Long cadastroId, 
       @Param("statusPedido") StatusPedido statusPedido);
 }

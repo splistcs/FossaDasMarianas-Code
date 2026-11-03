@@ -1,4 +1,4 @@
-/*package fdmapi.cadastro.service;
+package fdmapi.cadastro.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +11,24 @@ import org.springframework.transaction.annotation.Transactional;
 import fdmapi.cadastro.dto.CadastroRespostaDto;
 import fdmapi.cadastro.model.Cadastro;
 import fdmapi.cadastro.repository.CadastroRepository;
+import fdmapi.endereco.model.Endereco;
+import fdmapi.cadastro.model.TipoCadastro;
+import fdmapi.endereco.dto.EnderecoDto;
+import fdmapi.cadastro.dto.CadastroDto;
+import fdmapi.endereco.repository.EnderecoRepository;
 
 @Service
 public class CadastroService {
-
     private final CadastroRepository cadastroRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EnderecoRepository enderecoRepository;
 
-    public CadastroService(CadastroRepository cadastroRepository, PasswordEncoder passwordEncoder) {
+    public CadastroService(CadastroRepository cadastroRepository, PasswordEncoder passwordEncoder, 
+        EnderecoRepository enderecoRepository) {
+
         this.cadastroRepository = cadastroRepository;
         this.passwordEncoder = passwordEncoder;
+		    this.enderecoRepository = enderecoRepository;
     }
 
     public Iterable<Cadastro> getAll() {
@@ -74,6 +82,27 @@ public class CadastroService {
     public Cadastro aprovarSolicitacao(Cadastro cadastro) {
         cadastro.setAtivo(true);
         return cadastroRepository.save(cadastro);
+    }  
+
+    public CadastroDto findCadastroDtoById(Long id) {
+		  return CadastroDto.from(cadastroRepository.findById(id).orElse(null));
+	  }
+
+    public EnderecoDto findEnderecoDtoById(Long id) {
+		  return EnderecoDto.from(enderecoRepository.findById(id).orElse(null));
+	  }
+
+    public Optional<Cadastro> findCadastroById(Long id) {
+		  return cadastroRepository.findById(id);
+	  }
+
+    public Optional<Endereco> findEnderecoById(Long id) {
+		  return enderecoRepository.findById(id);
+	  }
+
+    public Boolean confirmaCadastroPorId(Long id) {
+      Boolean ativo = new Boolean(cadastroRepository.selectCadastroGetAtivo(id));
+      return ativo;
     }
 
     // Exclui o cadastro e, pela cascata, os seus endereços
@@ -100,4 +129,4 @@ public class CadastroService {
             throw e;
         }
     }
-}*/
+}

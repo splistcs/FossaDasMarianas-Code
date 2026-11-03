@@ -1,10 +1,8 @@
-package fdmapi.mantercadastro.model;
+/*package fdmapi.mantercadastro.model;
 
-/* Java import */
 import java.util.ArrayList;
 import java.util.List;
 
-/* JPA import */
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
@@ -19,12 +17,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinTable;
 
-/* FossaDasMarinanas fdmapi import */
 import fdmapi.mantercadastro.model.Endereco;
 import fdmapi.mantercadastro.model.TipoCadastro;
 import fdmapi.realizarpedido.model.Pedido;
 
-/* Misc. import */
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -71,4 +67,4 @@ public class Cliente {
              joinColumns = @JoinColumn(name = "cliente_id"), 
              inverseJoinColumns = @JoinColumn(name = "endereco_id"))
   private List<Endereco> enderecos;
-}
+}*/
