@@ -27,22 +27,16 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
     private String descricao;
 
-    @Column(nullable = false)
     private String material;
 
-    @Column(nullable = false)
     private String marca;
 
-    @Column(nullable = false)
     private Boolean ativo;
 
-    @Column
     private String imagemPrincipalUrl;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
